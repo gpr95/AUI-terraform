@@ -15,7 +15,7 @@ data "aws_ecs_task_definition" "familyData" {
 resource "aws_ecs_service" "microJsService" {
   name          = "microJSService"
   cluster       = "AUI-projekt1-ECSCluster-1I9TQ5HLRGFX7"
-  desired_count = 1
+  desired_count = 2
 
   load_balancer {
     target_group_arn = "${aws_lb_target_group.microJSTargGroup.arn}"
@@ -37,6 +37,9 @@ resource "aws_lb_target_group" "microJSTargGroup" {
   port     = 80
   protocol = "HTTP"
   vpc_id   = "vpc-00e51206864b7c9b7"
+  health_check {
+    path = "/users"
+  }
 }
 
 resource "aws_lb_target_group_attachment" "mciroJSAttachment" {
@@ -52,7 +55,7 @@ data "aws_ecs_task_definition" "familyDataBak" {
 resource "aws_ecs_service" "dateTimeService" {
   name          = "dateTimeService"
   cluster       = "AUI-projekt1-ECSCluster-1I9TQ5HLRGFX7"
-  desired_count = 1
+  desired_count = 2
 
   load_balancer {
     target_group_arn = "${aws_lb_target_group.dateTimeServiceGroup.arn}"
@@ -73,6 +76,9 @@ resource "aws_lb_target_group" "dateTimeServiceGroup" {
   port     = 80
   protocol = "HTTP"
   vpc_id   = "vpc-00e51206864b7c9b7"
+  health_check {
+    path = "/date"
+  }
 }
 
 resource "aws_lb_target_group_attachment" "datetimeAttachment" {
