@@ -17,6 +17,12 @@ resource "aws_ecs_service" "microJsService" {
   cluster       = "AUI-projekt1-ECSCluster-1I9TQ5HLRGFX7"
   desired_count = 1
 
+  load_balancer {
+    target_group_arn = "${aws_lb_target_group.microJSTargGroup.arn}"
+    container_name   = "MicroJS"
+    container_port   = 3000
+  }
+
   # Track the latest ACTIVE revision
   task_definition = "${aws_ecs_task_definition.taskdef.family}:${max("${aws_ecs_task_definition.taskdef.revision}", "${data.aws_ecs_task_definition.familyData.revision}")}"
 }
@@ -47,6 +53,12 @@ resource "aws_ecs_service" "dateTimeService" {
   name          = "dateTimeService"
   cluster       = "AUI-projekt1-ECSCluster-1I9TQ5HLRGFX7"
   desired_count = 1
+
+  load_balancer {
+    target_group_arn = "${aws_lb_target_group.dateTimeServiceGroup.arn}"
+    container_name   = "DateTime"
+    container_port   = 8080
+  }
 
   task_definition = "${aws_ecs_task_definition.taskdefBak.family}:${max("${aws_ecs_task_definition.taskdefBak.revision}", "${data.aws_ecs_task_definition.familyDataBak.revision}")}"
 }
