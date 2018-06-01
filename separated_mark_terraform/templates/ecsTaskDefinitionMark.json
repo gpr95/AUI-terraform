@@ -2,8 +2,8 @@
   {
     "name": "Hash",
     "image": "528881135499.dkr.ecr.eu-central-1.amazonaws.com/hasher:latest",
-    "cpu": 128,
-    "memory": 128,
+    "cpu": 256,
+    "memory": 64,
     "essential": true,
     "portMappings": [
       {

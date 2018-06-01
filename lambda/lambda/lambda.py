@@ -1,12 +1,11 @@
 import boto3
-import botocore
 from os.path import basename
 import zipfile
 import os
+import botocore
+import shutil
 
 BUCKET_NAME = 'zip-keeper-aui-project'
-
-
 
 def download_from_s3(file_name):
     s3 = boto3.resource('s3')
@@ -19,14 +18,8 @@ def download_from_s3(file_name):
             raise
 
 def zip_file(original_file, destination_file):
-    zf = zipfile.ZipFile('/tmp/' + destination_file, mode='w')
-    if not zipfile.is_zipfile('/tmp/' + original_file):
-        try:
-            zf.write('/tmp/' + original_file)
-        except KeyError:
-            print('ERROR')
-        finally:
-            zf.close()
+    zipfile.ZipFile('/tmp/' + destination_file, mode='w').write('/tmp/' + original_file)
+
 
 def upload_to_s3(file_name):
     s3 = boto3.resource('s3')
@@ -34,8 +27,9 @@ def upload_to_s3(file_name):
 
 def handler(event, context):
     file_to_zip = event['Records'][0]['s3']['object']['key']
+    if '.zip' in file_to_zip:
+        return
     download_from_s3(file_to_zip)
-    zip_name = basename(file_to_zip)
-    zip_name = os.path.splitext(zip_name)[0] + '.zip'
+    zip_name = os.path.splitext(basename(file_to_zip))[0] + '.zip'
     zip_file(file_to_zip, zip_name)
     upload_to_s3(zip_name)
