@@ -4,6 +4,7 @@ import zipfile
 import os
 import botocore
 import shutil
+import pathlib
 
 BUCKET_NAME = 'zip-keeper-aui-project'
 
@@ -29,6 +30,11 @@ def handler(event, context):
     file_to_zip = event['Records'][0]['s3']['object']['key']
     if '.zip' in file_to_zip:
         return
+    # Create needed files
+    file_to_zip_with_tmp = '/tmp/' + file_to_zip
+    path = pathlib.Path(file_to_zip_with_tmp)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
     download_from_s3(file_to_zip)
     zip_name = os.path.splitext(basename(file_to_zip))[0] + '.zip'
     zip_file(file_to_zip, zip_name)
