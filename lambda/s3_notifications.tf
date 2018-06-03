@@ -51,7 +51,7 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
   lambda_function {
     lambda_function_arn = "${aws_lambda_function.func.arn}"
     events              = ["s3:ObjectCreated:Put"]
-    filter_suffix       = ".txt"
+    filter_suffix       = ".jpg"
   }
 }
 
@@ -102,10 +102,10 @@ resource "aws_iam_policy" "lambda_s3" {
 EOF
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = "${aws_iam_role.iam_for_lambda.name}"
-  policy_arn = "${aws_iam_policy.lambda_logging.arn}"
-}
+# resource "aws_iam_role_policy_attachment" "lambda_logs" {
+#   role       = "${aws_iam_role.iam_for_lambda.name}"
+#   policy_arn = "${aws_iam_policy.lambda_logging.arn}"
+# }
 
 resource "aws_iam_role_policy_attachment" "lambda_s3" {
   role       = "${aws_iam_role.iam_for_lambda.name}"

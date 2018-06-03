@@ -17,7 +17,7 @@ data "aws_ecs_task_definition" "familyDataMark" {
 }
 
 resource "aws_ecs_service" "serviceMark" {
-  name          = "dateTimeService"
+  name          = "serviceMark"
   cluster       = "AUI-projekt1-ECSCluster-1I9TQ5HLRGFX7"
   desired_count = "${var.desired_count}"
 
@@ -32,20 +32,18 @@ resource "aws_ecs_service" "serviceMark" {
   depends_on = [
     "aws_ecs_task_definition.taskdefMark",
   ]
-
-  lifecycle {
-    ignore_changes = ["task_definition"] # the same here, do nothing if it was already installed
-  }
 }
 
 resource "aws_ecs_task_definition" "taskdefMark" {
   family                = "mark"
-  container_definitions = "${file("templates/ecsTaskDefinitionMark.json")}"
+  container_definitions = "${template_file.tempalteMark.rendered}"
+}
 
-  lifecycle {
-    ignore_changes = [
-      "container_definitions",
-    ] # if template file changed, do nothing, believe that human's changes are source of truth
+resource "template_file" "tempalteMark" {
+  template = "${file("templates/ecsTaskDefinitionMark.json")}"
+
+  vars {
+    uuid = "${uuid()}"
   }
 }
 

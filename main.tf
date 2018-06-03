@@ -37,9 +37,17 @@ resource "aws_ecs_service" "serviceMich" {
   task_definition = "${aws_ecs_task_definition.taskdefMich.family}:${max("${aws_ecs_task_definition.taskdefMich.revision}", "${data.aws_ecs_task_definition.familyDataMich.revision}")}"
 }
 
+resource "template_file" "tempalteMich" {
+  template = "${file("templates/ecsTaskDefinitionMich.json")}"
+
+  vars {
+    uuid = "${uuid()}"
+  }
+}
+
 resource "aws_ecs_task_definition" "taskdefMich" {
   family                = "js"
-  container_definitions = "${file("templates/ecsTaskDefinitionMich.json")}"
+  container_definitions = "${template_file.tempalteMich.rendered}"
 }
 
 resource "aws_lb_target_group" "targetGroupMich" {
@@ -81,7 +89,15 @@ resource "aws_ecs_service" "serviceBak" {
 
 resource "aws_ecs_task_definition" "taskdefBak" {
   family                = "bak"
-  container_definitions = "${file("templates/ecsTaskDefinitionBak.json")}"
+  container_definitions = "${template_file.tempalteBak.rendered}"
+}
+
+resource "template_file" "tempalteBak" {
+  template = "${file("templates/ecsTaskDefinitionBak.json")}"
+
+  vars {
+    uuid = "${uuid()}"
+  }
 }
 
 resource "aws_lb_target_group" "targetGroupBak" {
